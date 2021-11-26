@@ -19,7 +19,7 @@ class MLP:
     def __init__(self):
 
         # hyperparameters
-        self.learning_rate = 0.5
+        self.learning_rate = 0.2
 
         # init input layer weights
         self.b_input = np.random.uniform(-0.5, 0.5, (3, 1))
@@ -66,7 +66,7 @@ class MLP:
 
         # calculate gradients
         derror = mse_derivative(y_hat, y)[0][0]
-        self.b_input_grad += derror * delta_b_layer  # x at bias = 1.0
+        self.b_input_grad += derror * delta_b_layer * 1.0  # x at bias = 1.0
         self.w_input_grad += derror * delta_w_layer * x  # identity activation function in input layer f(h) = x
         self.b_layer_grad += derror * delta_output * 1.0  # activation von bias is f(h0) = 1
         self.w_layer_grad += derror * delta_output * np.tanh(h_layer)
@@ -96,7 +96,7 @@ class MLP:
                 error.append(mse(self.predict(x), y))
             error = np.mean(error)
             error_logging.append(error)
-            if np.abs(error - last_periods_error) / error < 1e-5 or t == 3000:
+            if np.abs(error - last_periods_error) / error < 1e-9 or t == 10000:
                 Done = True
             last_periods_error = np.mean(error)
         return error_logging
