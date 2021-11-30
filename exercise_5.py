@@ -75,7 +75,7 @@ if __name__ == "__main__":
     # i
     for order in range(10):
         pass
-        # scatter_plot(x_validation_sphered, phi_validation[order, :], "Monomial of order: {}".format(order + 1))
+        scatter_plot(x_validation_sphered, phi_validation[order, :], "Monomial of order: {}".format(order + 1))
 
     # ii)
     w_star = np.linalg.inv(phi_train.dot(phi_train.transpose())).dot(phi_train).dot(y_train.transpose())
@@ -134,4 +134,57 @@ if __name__ == "__main__":
     plt.plot(y_validation, label="true y")
     plt.legend()
     plt.title("Correct Cross Validation")
+    plt.show()
+
+    # d
+    row = 0
+    K = 10
+    Z = np.arange(-4.0, 4.0, 0.1)
+    mse = np.zeros(shape=(K, len(Z)))
+    kf = KFold(n_splits=K, shuffle=True)
+    for train_index, test_index in kf.split(phi_validation.transpose(), y_validation.transpose()):
+        phi_train_cv, phi_test_cv = phi_validation[:, train_index], phi_validation[:, test_index]
+        y_train_cv, y_test_cv = y_validation[train_index], y_validation[test_index]
+
+        # size of Phi needed for identity matrix
+        m = phi_train_cv.shape[0]
+        for col, z in enumerate(Z):
+
+            # train with regularization
+            lambd = 10 ** z
+            w_reg = np.linalg.inv(phi_train_cv.dot(phi_train_cv.transpose()) + lambd * np.identity(m)).dot(phi_train_cv).dot(y_train_cv.transpose())
+
+            # get mse
+            y_predicted_cv = w_reg.transpose().dot(phi_test_cv)
+            mse[row, col] = np.mean((y_test_cv - y_predicted_cv) ** 2)
+
+        row += 1
+
+    # plot results
+    mean = np.mean(mse, axis=0)
+    std = np.std(mse, axis=0)
+    plt.errorbar(Z, mean, std)
+    plt.show()
+
+    # ii
+    print("Best lambda with validation set: ", Z[np.argmin(np.mean(mse, axis=0))], " with MSE: ", np.min(np.mean(mse, axis=0)))
+    lambd_star = 10 ** Z[np.argmin(np.mean(mse, axis=0))]
+
+    # iii
+    w_star_reg = np.linalg.inv(phi_validation.dot(phi_validation.transpose()) + lambd_star * np.identity(n=phi_validation.shape[0])).dot(phi_validation).dot(
+        y_validation.transpose())
+    y_predicted_reg = w_star_reg.transpose().dot(phi_validation)
+    mse = (y_validation - y_predicted_reg) ** 2.0
+    print("MSE on evaluation set with validation as training: ", np.mean(mse))
+
+    # e
+    scatter_plot(x_train, y_train, "Training Set True Y (validation as training)", clip=True)
+    scatter_plot(x_train, w_star_reg.transpose().dot(phi_train), "Training Set Predicted Y (validation as training)", clip=True)
+    scatter_plot(x_validation, y_validation, "Validation Set True Y (validation as training)", clip=True)
+    scatter_plot(x_validation, y_predicted_reg, "Validation Set Predicted Y (validation as training)", clip=True)
+
+    plt.plot(y_predicted_reg, label="predicted y")
+    plt.plot(y_validation, label="true y")
+    plt.legend()
+    plt.title("Calidation as training Cross Validation")
     plt.show()
