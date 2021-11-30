@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from abc import abstractmethod
-import copy
 
 
 class Neuron:
