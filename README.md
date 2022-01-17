@@ -37,5 +37,57 @@ This branch only exists at your local computer and nobody nows about it for now.
 
 ### 3. Make your changes and commit them to your branch
 
+Now you can edit the files.
+If you are ready with your changes or you want to "save" your changes (e.g. when you finished one step), you can commit your changes.
+First add the files you changed and want to commit.
+Then commit them and write a commit message.
+
+```
+# this will add all files to the commit
+git add .
+
+# this will add only one file
+git add example_file.py
+
+git commit -m"I changed something in the first excercise"
+```
+
+### 4. Push your changes to the remote repository aka Github
+
+You can change and commit as much as you want.
+If you are satisfied with your changes you can now push your changes in your local branch to the remote repository.
+Remember: as for now the branch is only on your computer and nobody knows about it.
 
 
+```
+# try to push your changes to remote
+git push
+
+# it failed because the brnach in remote was not yet created, so run
+git push --set-upstream origin sheet-8-1
+```
+
+This will create the branch sheet-8-1 in github, set your the branch to track your local branch sheet-8-1.
+In the next step it pushes your changes to the remote branch (the one in the origin, the github repo).
+
+### 5. Create Pull request (PR)
+Now we have your changes in github but our main branch is still unaffected.
+In order to get your changes in the main branch, we create a pull request in github.
+There we can decide if we want to accept your changes and incorporate them in main or if we want you to modify it.
+Also if your changes are conflicting with other peoples' changes we can esolve this problems now.
+After we closed the PR we can delete the branch if we do not need it anymore.
+
+### 6. Update your local repository
+The main branch is now different than the version of the main branch you have stored on your personal computer.
+In order to get the latest version of the main branch from github, first always switch to your local main branch.
+Then pull the new version from github
+
+```
+# switch from branch sheet-8-1 to main
+git checkout main
+
+# get the latest version and ensure that you did no changes to your local main branch
+# this will update all the remote branches and the local branch you are in (e.g. the main branch).
+git pull --ff-only
+```
+If you want to modify something you can now start over with a creating a new branch, e.g. 2. 
