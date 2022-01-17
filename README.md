@@ -63,7 +63,8 @@ Remember: as for now the branch is only on your computer and nobody knows about 
 # try to push your changes to remote
 git push
 
-# it failed because the brnach in remote was not yet created, so run
+# it failed because the brnach in remote was not yet created
+# next time, when it is set up, you can use the first command
 git push --set-upstream origin sheet-8-1
 ```
 
