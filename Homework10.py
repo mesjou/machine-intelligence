@@ -5,15 +5,20 @@ Created on Thu Jan 20 14:11:56 2022
 @author: User
 """
 
+import os
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.svm import NuSVR
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import mean_squared_error
+
+
 #%% Load Data, fit model, test on validation set
-train = pd.read_csv("C:/Users/User/Documents/BSE weitere Semester/Machine Learning/TrainingRidge.csv")
-val = pd.read_csv("C:/Users/User/Documents/BSE weitere Semester/Machine Learning/ValidationRidge.csv")
+directory = os.getcwd()
+train = pd.read_csv(directory + "/data/TrainingRidge.csv")
+val = pd.read_csv(directory + "/data/ValidationRidge.csv")
 
 x_train = np.array([train.x1.values, train.x2]).transpose()
 y_train = np.array(train.obs.values)

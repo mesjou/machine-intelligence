@@ -3,3 +3,4 @@ matplotlib
 pandas
 sklearn
 tensorflow==2.7.0
+jupyter

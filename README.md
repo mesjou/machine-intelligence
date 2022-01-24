@@ -1,7 +1,6 @@
 # machine-intelligence
 
-How to use a github repo
-
+## Using Version control with git
 
 ### 1. Clone the repository to your local machine.
 
@@ -92,3 +91,42 @@ git checkout main
 git pull --ff-only
 ```
 If you want to modify something you can now start over with a creating a new branch, e.g. 2. 
+
+
+## Using virtual environments
+
+For different project it could be necessary to use different version of python or different version of packages.
+Especially if you want to collaborate with other researchers.
+Thus, it is recommended to use a separate virtual environment for each of your projects and install python packages
+only in this environment.
+
+Software that lets you handly virtual environments are among others:
+conda, virtualenv that comes with python, pyenv for MacOS.
+
+On a windows machine do the following:
+````
+# install virtualenv package if not already installed
+pip install virtualenv
+````
+
+cd to your project directory and run virtualenv to create the new virtual environment.
+The following commands will create a new virtual environment under my-project/my-venv
+Maybe you have to specify the path to your python as given in the example.
+Maybe it works without so just type virtualenv venv (I am not sure because I do not have a windows machine).
+
+```
+cd my-project
+virtualenv --python C:\Path\To\Python\python.exe venv
+```
+
+Now you have installed an environment and you have to activate it.
+Then you can install the required packages that are specified in the requirements.txt file.
+```
+.\venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+To return to normal system settings (deactivate the virtualenv), use the deactivate command.
+```
+deactivate
+```
