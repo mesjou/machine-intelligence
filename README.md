@@ -90,7 +90,7 @@ git checkout main
 # this will update all the remote branches and the local branch you are in (e.g. the main branch).
 git pull --ff-only
 ```
-If you want to modify something you can now start over with a creating a new branch, e.g. 2. 
+If you want to modify something you can now start over with a creating a new branch, e.g. 2.
 
 
 ## Using virtual environments
@@ -130,3 +130,20 @@ To return to normal system settings (deactivate the virtualenv), use the deactiv
 ```
 deactivate
 ```
+
+## adding pre-commit to the project
+
+We can use pre-commit for automatically align our code to some formatting principles.
+For this purpose install pre-commit via pip the usual way.
+Then we can create a `.pre-commit-config.yaml` file were we define which hooks we want to add to git.
+In our example we use some pre configered ids from `pre-commit` and `black`.
+
+After creation of the config file we install the hooks to our git via running in terminal:
+```
+pre-commit install
+```
+Now everytime we add a changed file and want to commit it our configured git hooks will automatically check the file.
+If some formatting violates our specification of the config file,
+pre-commit will change it our instruct you to do it.
+After reformatting you can add your file again and try to commit again
+(See https://pre-commit.com for more information).
