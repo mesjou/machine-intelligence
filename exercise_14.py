@@ -131,7 +131,7 @@ def simulate_uncontrolled():
         obs = env.reset()
         done = False
         while not done:
-            obs, rew, done, info = env.step(1)  # action 1 means do nothing
+            obs, rew, done, info = env.step(0)  # action 0 means do nothing
             angle.append(obs[0])
 
         angles.append(angle)
