@@ -57,12 +57,12 @@ class ConjugateNeuron(Neuron):
         if denominator == 0.0:
             self.learning_rate = 0.0
         else:
-            self.learning_rate = - nominator / denominator
+            self.learning_rate = -nominator / denominator
 
     def train(self, x, y):
         if self.direction is False:
             gradient = self.gradient(x, y)
-            self.direction = - gradient
+            self.direction = -gradient
             self.old_gradient = gradient
 
         # update weights
@@ -76,7 +76,7 @@ class ConjugateNeuron(Neuron):
         if denominator == 0.0:
             beta = 0.0
         else:
-            beta = - nominator / denominator
+            beta = -nominator / denominator
         self.direction = new_gradient + beta * self.direction
         self.old_gradient = new_gradient
 

@@ -77,10 +77,33 @@ def get_transition_model_from(maze: np.array) -> np.array:
     return transition_model
 
 
-def get_policy(maze: np.array) -> np.array:
+def get_uniform_policy(maze: np.array) -> np.array:
     n_actions = 4
     policy = np.zeros((maze.size, n_actions))
     policy = np.full_like(policy, 1 / n_actions)
+    return policy
+
+
+def get_policy(maze: np.array) -> np.array:
+    n_actions = 4
+    policy = np.zeros((maze.size, n_actions))
+
+    # if state x_i==3 do action 3 i.e go left
+    policy[maze.flatten() == 3, 2] = 1
+
+    # if state x_i==4 do action 1, i.e go right
+    policy[maze.flatten() == 4, 0] = 1
+
+    # if state x_i==5 do action 4, i.e go up
+    policy[maze.flatten() == 5, 3] = 1
+
+    # if state x_i==6 do action 2, i.e go down
+    policy[maze.flatten() == 6, 1] = 1
+
+    # if state x_i in {1,2} do each action with prob 1/n_actions
+    policy[maze.flatten() == 1, :] = 1 / n_actions
+    policy[maze.flatten() == 2, :] = 1 / n_actions
+
     return policy
 
 
@@ -97,7 +120,7 @@ def plot_value_function(maze, value: np.array):
 
 if __name__ == "__main__":
     # load mazes
-    mazes = load_mazes("mazes.txt")
+    mazes = load_mazes("data/mazes.txt")
     num_mazes = mazes.shape[0]
     fig = plt.figure(figsize=(20, 10))
     for m_idx, maze in enumerate(mazes[:-1]):
@@ -114,7 +137,7 @@ if __name__ == "__main__":
         p = get_transition_model_from(maze)
 
         # c calculate value function
-        pi = get_policy(maze)
+        pi = get_uniform_policy(maze)
         r = get_reward(maze)
 
         # since we choose every action with equal probability we can just take the average over all actions
@@ -137,7 +160,7 @@ if __name__ == "__main__":
         p = get_transition_model_from(maze)
 
         # c calculate value function
-        pi = get_policy(maze)
+        pi = get_uniform_policy(maze)
         r = get_reward(maze)
 
         # since we choose every action with equal probability we can just take the average over all actions
@@ -170,7 +193,7 @@ if __name__ == "__main__":
         p = get_transition_model_from(maze)
 
         # c calculate value function
-        pi = get_policy(maze)
+        pi = get_uniform_policy(maze)
         r = get_reward(maze)
 
         # since we choose every action with equal probability we can just take the average over all actions
@@ -195,4 +218,33 @@ if __name__ == "__main__":
 
     # plot mse over iterations
     plt.plot(np.array(mses).transpose())
+    plt.show()
+
+    # exercise 2
+    maze = mazes[3]
+    n_states = len(maze.flatten())
+    n_actions = 4
+
+    # plot to check if correct maze
+    fig = plt.figure(figsize=(20, 10))
+    plt.imshow(maze, interpolation="none", cmap="jet")
+    plt.axis("off")
+    plt.show()
+
+    # implement transition model
+    p = get_transition_model_from(maze)
+
+    pi = get_policy(maze)
+    r = get_reward(maze)
+
+    p_pi = np.zeros(shape=(n_states, n_states))
+    for k in range(n_actions):
+        p_pi += (pi[:, k] * p[:, :, k].transpose()).transpose()
+
+    # a calculate value function
+    gamma = 0.9
+    V = np.linalg.inv(np.identity(400) - 0.9 * p_pi).dot(r)
+
+    plt.imshow(np.log(V.reshape(maze.shape)), interpolation="none", cmap="jet")
+    plt.axis("off")
     plt.show()

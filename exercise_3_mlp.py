@@ -61,14 +61,20 @@ class MLP:
     def backpropagate(self, x, y_hat, y, h_layer):
         # get derivatives
         delta_output = 1.0
-        delta_w_layer = np.multiply(tanh_derivative(h_layer), self.w_layer).transpose()  # delta_output = 1.0
+        delta_w_layer = np.multiply(
+            tanh_derivative(h_layer), self.w_layer
+        ).transpose()  # delta_output = 1.0
         delta_b_layer = self.b_layer
 
         # calculate gradients
         derror = mse_derivative(y_hat, y)[0][0]
         self.b_input_grad += derror * delta_b_layer * 1.0  # x at bias = 1.0
-        self.w_input_grad += derror * delta_w_layer * x  # identity activation function in input layer f(h) = x
-        self.b_layer_grad += derror * delta_output * 1.0  # activation von bias is f(h0) = 1
+        self.w_input_grad += (
+            derror * delta_w_layer * x
+        )  # identity activation function in input layer f(h) = x
+        self.b_layer_grad += (
+            derror * delta_output * 1.0
+        )  # activation von bias is f(h0) = 1
         self.w_layer_grad += derror * delta_output * np.tanh(h_layer)
 
     def update(self, batch_size):
@@ -123,13 +129,20 @@ if __name__ == "__main__":
     plt.scatter(X, Y, label="data")
     for i in range(3):
         plt.plot(
-            np.linspace(0, 1, 50), [mlp.forward(x)[1][i] for x in np.linspace(0, 1, 50)], label="neuron_{}".format(i)
+            np.linspace(0, 1, 50),
+            [mlp.forward(x)[1][i] for x in np.linspace(0, 1, 50)],
+            label="neuron_{}".format(i),
         )
     plt.legend()
     plt.show()
 
     # plot prediction
     plt.scatter(X, Y, label="data")
-    plt.plot(np.linspace(0, 1, 50), [mlp.predict(x)[0][0] for x in np.linspace(0, 1, 50)], label="prediction", color="orange")
+    plt.plot(
+        np.linspace(0, 1, 50),
+        [mlp.predict(x)[0][0] for x in np.linspace(0, 1, 50)],
+        label="prediction",
+        color="orange",
+    )
     plt.legend()
     plt.show()
