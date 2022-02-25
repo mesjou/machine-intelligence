@@ -43,13 +43,13 @@ linear_model.add(
         units=10,
         kernel_initializer=initializers.Zeros(),
         bias_initializer=initializers.Zeros(),
-        activation=activations.softmax
+        activation=activations.softmax,
     )
 )
 linear_model.compile(
     optimizer=optimizers.SGD(learning_rate=0.5),
     loss=losses.CategoricalCrossentropy(),
-    metrics=['accuracy']
+    metrics=["accuracy"],
 )
 
 
@@ -60,34 +60,39 @@ mlp_model.add(
         units=1500,
         kernel_initializer=initializers.TruncatedNormal(stddev=0.01),
         bias_initializer=initializers.Constant(0.1),
-        activation=activations.relu
+        activation=activations.relu,
     )
 )
-mlp_model.add(layers.Dense(
-    units=1500,
-    kernel_initializer=initializers.TruncatedNormal(stddev=0.01),
-    bias_initializer=initializers.Constant(0.1),
-    activation=activations.relu
-    ))
-mlp_model.add(layers.Dense(
-    units=1500,
-    kernel_initializer=initializers.TruncatedNormal(stddev=0.01),
-    bias_initializer=initializers.Constant(0.1),
-    activation=activations.relu
-    ))
-mlp_model.add(layers.Dense(
-    units=10,
-    kernel_initializer=initializers.TruncatedNormal(stddev=0.01),
-    bias_initializer=initializers.Constant(0.1),
-    activation=activations.softmax
-    ))
+mlp_model.add(
+    layers.Dense(
+        units=1500,
+        kernel_initializer=initializers.TruncatedNormal(stddev=0.01),
+        bias_initializer=initializers.Constant(0.1),
+        activation=activations.relu,
+    )
+)
+mlp_model.add(
+    layers.Dense(
+        units=1500,
+        kernel_initializer=initializers.TruncatedNormal(stddev=0.01),
+        bias_initializer=initializers.Constant(0.1),
+        activation=activations.relu,
+    )
+)
+mlp_model.add(
+    layers.Dense(
+        units=10,
+        kernel_initializer=initializers.TruncatedNormal(stddev=0.01),
+        bias_initializer=initializers.Constant(0.1),
+        activation=activations.softmax,
+    )
+)
 mlp_model.compile(
-    optimizer=optimizers.Adam(learning_rate=0.001,
-                              beta_1=0.9,
-                              beta_2=0.999,
-                              epsilon=1e-8),
+    optimizer=optimizers.Adam(
+        learning_rate=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-8
+    ),
     loss=losses.CategoricalCrossentropy(),
-    metrics=['accuracy']
+    metrics=["accuracy"],
 )
 
 
@@ -107,13 +112,11 @@ if __name__ == "__main__":
     # 1. Linear model
     # 60.000 datapoints, batch size=100-> we need 600 iterations to complete one epoch
     # -> we need around 17 epochs to complete 10.000 iterations
-    acurracy_history = MetricsCallback(x_train=x_train, x_evaluate=x_test, y_train=y_train, y_evaluate=y_test)
+    acurracy_history = MetricsCallback(
+        x_train=x_train, x_evaluate=x_test, y_train=y_train, y_evaluate=y_test
+    )
     linear_history = linear_model.fit(
-        x=x_train,
-        y=y_train,
-        batch_size=100,
-        epochs=17,
-        callbacks=[acurracy_history]
+        x=x_train, y=y_train, batch_size=100, epochs=17, callbacks=[acurracy_history]
     )
     linear_model.evaluate(x=x_test, y=y_test)
     plt.plot(acurracy_history.evaluation_error, label="Evaluation Accuracy")
@@ -125,13 +128,11 @@ if __name__ == "__main__":
     # 2. MLP
     # 60.000 datapoints, batch size=100-> we need 600 iterations to complete one epoch
     # -> we need around 33 epochs to complete 20.000 iterations
-    acurracy_history = MetricsCallback(x_train=x_train, x_evaluate=x_test, y_train=y_train, y_evaluate=y_test)
+    acurracy_history = MetricsCallback(
+        x_train=x_train, x_evaluate=x_test, y_train=y_train, y_evaluate=y_test
+    )
     mlp_history = mlp_model.fit(
-        x=x_train,
-        y=y_train,
-        batch_size=100,
-        epochs=33,
-        callbacks=[acurracy_history]
+        x=x_train, y=y_train, batch_size=100, epochs=33, callbacks=[acurracy_history]
     )
     mlp_model.evaluate(x=x_test, y=y_test)
     plt.plot(acurracy_history.evaluation_error, label="Training Accuracy")
