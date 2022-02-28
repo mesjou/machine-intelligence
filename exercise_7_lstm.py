@@ -28,25 +28,27 @@ if __name__ == "__main__":
     b = model.layers[0].get_weights()[2]
 
     W_i = W[:, :units]
-    W_f = W[:, units: units * 2]
-    W_c = W[:, units * 2: units * 3]
-    W_o = W[:, units * 3:]
+    W_f = W[:, units : units * 2]
+    W_c = W[:, units * 2 : units * 3]
+    W_o = W[:, units * 3 :]
 
     U_i = U[:, :units]
-    U_f = U[:, units: units * 2]
-    U_c = U[:, units * 2: units * 3]
-    U_o = U[:, units * 3:]
+    U_f = U[:, units : units * 2]
+    U_c = U[:, units * 2 : units * 3]
+    U_o = U[:, units * 3 :]
 
     b_i = b[:units]
-    b_f = b[units: units * 2]
-    b_c = b[units * 2: units * 3]
-    b_o = b[units * 3:]
+    b_f = b[units : units * 2]
+    b_c = b[units * 2 : units * 3]
+    b_o = b[units * 3 :]
 
     # train model
     model.compile(
         loss=BinaryCrossentropy(),
-        optimizer=optimizers.Adam(learning_rate=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-8),
-        metrics=["accuracy"]
+        optimizer=optimizers.Adam(
+            learning_rate=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-8
+        ),
+        metrics=["accuracy"],
     )
     history = model.fit(x_train, y_train, epochs=60, batch_size=50, verbose=0)
     plt.plot(history.history["accuracy"])
@@ -64,5 +66,3 @@ if __name__ == "__main__":
     y_pred = model.predict(x_test)
     confusion_matrix = confusion_matrix(y_test, y_pred)
     print(confusion_matrix)
-
-

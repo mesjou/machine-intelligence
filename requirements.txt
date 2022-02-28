@@ -6,3 +6,5 @@ tensorflow==2.7.0
 jupyter
 networkx
 pgmpy
+pre-commit
+gym
