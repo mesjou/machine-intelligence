@@ -2,6 +2,7 @@
 
 import numpy as np
 from sklearn.decomposition import PCA
+from sklearn.feature_extraction.image import extract_patches_2d
 import matplotlib.pyplot as plt
 import os
 import random
@@ -168,3 +169,81 @@ plt.show()
 
 
 # Exercise 4
+
+import glob
+from matplotlib import image
+
+# a)
+# load data and center
+
+
+def sample_patches(start_letter):
+
+    # get image name
+    image_dir = os.getcwd() + "/data/imgpca/"
+    image_name = str(start_letter) + "*.jpg"
+    files = glob.glob(os.path.join(image_dir, image_name))
+    assert len(files) > 0.0, "NO IMAGES FOUND"
+
+    # load image and smaple
+    patch_size = (16, 16)
+    patches = np.empty((0,) + patch_size)
+
+    for file in files:
+        data = image.imread(file)
+
+        # display the array of pixels as an image
+        # pyplot.imshow(data)
+        # pyplot.show()
+
+        # sample patches
+        new_patches = extract_patches_2d(
+            image=data, patch_size=(16, 16), max_patches=500
+        )
+        patches = np.concatenate((patches, new_patches), axis=0)
+
+    print("Patches size: ", patches.shape)
+
+    return patches
+
+
+building_patches = sample_patches("b")
+nature_patches = sample_patches("n")
+
+# b)
+
+
+def plot_pca_direction(pca):
+    fig, axes = plt.subplots(4, 6)
+    for i, ax in enumerate(axes.flatten()):
+        component = pca.components_[i, :]
+        ax.imshow(component.reshape((16, 16)))
+    plt.show()
+
+
+# apply PCA to buildings
+pca_buildings = PCA(n_components=24)
+pca_buildings.fit(building_patches.reshape(*building_patches.shape[:-2], -1))
+plot_pca_direction(pca_buildings)
+
+# apply PCA to nature
+pca_nature = PCA(n_components=24)
+transformed_data = pca_nature.fit(
+    nature_patches.reshape(*nature_patches.shape[:-2], -1)
+)
+plot_pca_direction(pca_nature)
+
+# c)
+
+
+def scree_plot(pca, title):
+    PC_values = np.arange(pca.n_components_) + 1
+    plt.plot(PC_values, pca.explained_variance_ratio_, "o-", linewidth=2, color="blue")
+    plt.title("Scree Plot " + title)
+    plt.xlabel("Principal Component")
+    plt.ylabel("Variance Explained")
+    plt.show()
+
+
+scree_plot(pca_buildings, "Buildings")
+scree_plot(pca_nature, "Nature")
