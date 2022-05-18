@@ -60,6 +60,27 @@ def scree_plot(pca, title):
     plt.show()
 
 
+def batch_pca(data):
+    # center data
+    # data_centered= data - np.mean(data, axis=0)
+    # eigenvalue decomposition of covariance matrix
+    cov = np.cov(data[range(90, 100), :].transpose())
+    # eigenvalues lambda and right eigenvectors eig
+    lamb, eig = np.linalg.eig(cov)
+    # sort according to eigenvalues (!lowest first)
+    idx = np.argsort(lamb)
+    pca = eig[:, idx]
+    return pca
+
+
+def ojas_rule(epsilon, data, w_0):
+    w = w_0
+    for data_point in data:
+        y = w.transpose() @ data_point
+        w = w + epsilon * y * (data_point - y * w)
+    return w
+
+
 if __name__ == "__main__":
 
     # exercise 1
@@ -141,58 +162,45 @@ if __name__ == "__main__":
     plt.colorbar()
     plt.title("Cov of whitened data")
     plt.show()
-    
-#%% exercise 4
-# load data
-data = np.loadtxt(os.getcwd() + "/data/data-onlinePCA.txt", 
-                  delimiter=",", skiprows=1, usecols=range(1, 3))
 
-n_blocks=10
-len_blocks=200
+    # exercise 4
+    # load data
+    data = np.loadtxt(
+        os.getcwd() + "/data/data-onlinePCA.txt",
+        delimiter=",",
+        skiprows=1,
+        usecols=range(1, 3),
+    )
 
-def batch_pca(data):
-    #center data
-    #data_centered= data - np.mean(data, axis=0)
-    # eigenvalue decomposition of covariance matrix
-    cov =np.cov(data[range(90,100),:].transpose())
-    #eigenvalues lambda and right eigenvectors eig
-    lamb, eig = np.linalg.eig(cov)
-    #sort according to eigenvalues (!lowest first)
-    idx=np.argsort(lamb)
-    pca=eig[:,idx]    
-    return pca
+    n_blocks = 10
+    len_blocks = 200
 
+    plt.subplot(1, 1, 1)
+    plt.scatter(data[:, 0], data[:, 1], c=range(2000))
 
-plt.subplot(1,1,1)
-plt.scatter(data[:,0], data[:,1], c=range(2000))
-
-for block in range(n_blocks):
-   pca=batch_pca(data[range(block*len_blocks, block*len_blocks +len_blocks),:])
-   plt.quiver(0,0,pca[0,1], pca[1,1], scale=5)
-  
-plt.show()
-
-#%%Ojas rule for different learning parameter epsilon
-#learning paramenter
-epsilons=(0.002, 0.04,0.45)
-
-def ojas_rule(epsilon, data,w_0):
-    w=w_0
-    for data_point in data:
-        y=w.transpose()@data_point
-        w= w+ epsilon*y*(data_point - y*w)
-    return w
-     
-
-for epsilon in epsilons:
-
-    plt.subplot(1,1,1)
-    plt.scatter(data[:,0], data[:,1], c=range(2000))   
-    w=np.full(data.shape[1], 0.1) 
     for block in range(n_blocks):
-        data_block=data[range(block*len_blocks, block*len_blocks +len_blocks),:]
-        w=ojas_rule(epsilon, data_block, w)
-        
-        plt.quiver(0,0,w[0], w[1], scale=1)
-    
-    plt.show()   
+        pca = batch_pca(
+            data[range(block * len_blocks, block * len_blocks + len_blocks), :]
+        )
+        plt.quiver(0, 0, pca[0, 1], pca[1, 1], scale=5)
+
+    plt.show()
+
+    # Ojas rule for different learning parameter epsilon
+    # learning paramenter
+    epsilons = (0.002, 0.04, 0.45)
+
+    for epsilon in epsilons:
+
+        plt.subplot(1, 1, 1)
+        plt.scatter(data[:, 0], data[:, 1], c=range(2000))
+        w = np.full(data.shape[1], 0.1)
+        for block in range(n_blocks):
+            data_block = data[
+                range(block * len_blocks, block * len_blocks + len_blocks), :
+            ]
+            w = ojas_rule(epsilon, data_block, w)
+
+            plt.quiver(0, 0, w[0], w[1], scale=1)
+
+        plt.show()
